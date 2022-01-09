@@ -1,0 +1,89 @@
+# This workflow will :
+# check branch name and save environement variable
+# build a package using Maven
+# deploy package on Github project page
+# push generate jar to middleware
+
+name: Maven Package
+
+on:
+  push:
+    branches: [ main, develop ]
+
+jobs:
+  build:
+
+    # setup os
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checks-out repository under Github workspace & setup java
+      - uses: actions/checkout@v2
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+          server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
+          settings-path: ${{ github.workspace }} # location for the settings.xml file
+
+      # Cache maven dependency
+      - name: Cache Maven packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2
+          key: '${{ runner.os }}-m2-${{ hashFiles(''**/pom.xml'') }}'
+          restore-keys: '${{ runner.os }}-m2'
+
+      # Setup maven settings.xml
+      - uses: s4u/maven-settings-action@v2.4.1
+        with:
+          servers: |
+            [{
+                "id": "github",
+                "username": "${{ secrets.GIT_USER }}",
+                "password": "${{ secrets.GIT_TOKEN }}"
+            }]
+
+      # Check branch name and put name in env variable
+      - name: Some check on branch
+        id: branch_check
+        run: |
+          echo "Running on branch ${{ github.ref }}"
+          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+          echo "::set-output name=env_name::Production"
+          elif [ "${{ github.ref }}" = "refs/heads/develop" ]; then
+          echo "::set-output name=env_name::Developpement"
+          else
+          echo "::set-output name=env_name::Features"
+          fi
+
+      # Build Maven Package
+      - name: Build with Maven Production
+        run: mvn package
+
+      # Publish jar to infrastructure
+      - name: Publish
+        id: bcAction
+        uses: fjogeleit/http-request-action@master
+        with:
+          url: 'http://54.36.124.50:3000/'
+          data: '{"type": "commons" ,"version": "${{ steps.branch_check.outputs.env_name }}" }'
+          files: '{ "file": "${{ github.workspace }}/target/Commons.jar" }'
+          username: ${{ secrets.INFRA_USER }}
+          password: ${{ secrets.INFRA_PASSWORD }}
+
+      #Delete old package from Github
+      - uses: smartsquaregmbh/delete-old-packages@v0.3.3
+        with:
+          names: |
+            1.0-SNAPSHOT
+
+      # Deploy Package to Github
+      - name: Publish to GitHub Packages Apache Maven
+        run: mvn --batch-mode -B deploy
+        env:
+          GITHUB_TOKEN: ${{ secrets.INFRA_TOKEN }}
+
+    outputs:
+      env_name: ${{ steps.branch_check.outputs.env_name }} # Save branche name

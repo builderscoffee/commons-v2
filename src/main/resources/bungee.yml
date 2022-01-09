@@ -1,0 +1,14 @@
+name: Commons
+version: 0.1
+description: Commons for Builders Coffe.
+author: BuildersCoffee_Team
+main: eu.builderscoffee.commons.bungeecord.CommonsBungeeCord
+depends: [ "API", "LuckPerms" ]
+commands:
+  staffchat:
+    aliases: [ sc ]
+    description: Envoi un message dans le chat du staff
+  pban:
+    description: Permanent ban
+  move:
+    description: Move command

@@ -1,0 +1,28 @@
+name: Commons
+version: 0.1
+description: Commons for Builders Coffe.
+author: BuildersCoffee
+main: eu.builderscoffee.commons.bukkit.CommonsBukkit
+depend: [ API, LuckPerms ]
+commands:
+  network:
+    aliases: [ net ]
+    description: Ouvre le menu network
+  menu:
+    description: Ouvre le menu network
+  profil:
+    description: Ouvre le menu profil
+  hub:
+    description: Se déplace dans le serveur hub
+  lobby:
+    description: Se déplace dans le serveur hub
+  help:
+    description: Help command
+  staffchat:
+    aliases: [ sc ]
+    description: Staffchat command
+  broadcast:
+    aliases: [bc]
+    description: Envoi un message important
+  manage:
+    description: Manage db
