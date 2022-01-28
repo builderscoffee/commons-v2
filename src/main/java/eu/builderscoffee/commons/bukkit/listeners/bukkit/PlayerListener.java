@@ -6,7 +6,6 @@ import eu.builderscoffee.api.common.redisson.Redis;
 import eu.builderscoffee.commons.bukkit.CommonsBukkit;
 import eu.builderscoffee.commons.bukkit.inventory.servermanager.ServerManagerInventory;
 import eu.builderscoffee.commons.bukkit.utils.MessageUtils;
-import eu.builderscoffee.commons.common.redisson.packets.ServerManagerRequest;
 import eu.builderscoffee.commons.common.redisson.packets.StaffChatPacket;
 import eu.builderscoffee.commons.common.redisson.topics.CommonTopics;
 import eu.builderscoffee.commons.common.utils.LuckPermsUtils;
@@ -36,11 +35,11 @@ public class PlayerListener implements Listener {
         }
 
         // Mettre à jour le pseudo si ce n'est pas correcte
-        if (!player.getName().equalsIgnoreCase(profil.getName())){
+        if (!player.getName().equalsIgnoreCase(profil.getName())) {
             profil.setName(player.getName());
             DataManager.getProfilStore().update(profil);
         }
-        if(Objects.isNull(profil.getLang())){
+        if (Objects.isNull(profil.getLang())) {
             profil.setLang(Profil.Languages.FR);
             DataManager.getProfilStore().update(profil);
         }
@@ -75,10 +74,10 @@ public class PlayerListener implements Listener {
         // Message de join
         if (LuckPermsUtils.getWeight(player.getUniqueId()) > MessageUtils.getMessageConfig(player).getJoin().getWeight()) {
             event.setJoinMessage(MessageUtils.getMessageConfig(player).getJoin().getMessage()
-                .replace("%player%", player.getName())
-                .replace("%prefix%", LuckPermsUtils.getPrefixOrEmpty(player.getUniqueId()))
-                .replace("%suffix%", LuckPermsUtils.getSuffixOrEmpty(player.getUniqueId()))
-                .replace("&", "§"));
+                    .replace("%player%", player.getName())
+                    .replace("%prefix%", LuckPermsUtils.getPrefixOrEmpty(player.getUniqueId()))
+                    .replace("%suffix%", LuckPermsUtils.getSuffixOrEmpty(player.getUniqueId()))
+                    .replace("&", "§"));
         } else {
             event.setJoinMessage(null);
         }
@@ -91,8 +90,8 @@ public class PlayerListener implements Listener {
         // Message de leave
         if (LuckPermsUtils.getWeight(player.getUniqueId()) > MessageUtils.getMessageConfig(player).getQuit().getWeight()) {
             event.setQuitMessage(MessageUtils.getMessageConfig(player).getQuit().getMessage()
-                .replace("&", "§")
-                .replace("%player%", player.getName()));
+                    .replace("&", "§")
+                    .replace("%player%", player.getName()));
         } else {
             event.setQuitMessage(null);
         }
@@ -118,18 +117,18 @@ public class PlayerListener implements Listener {
         // StaffChat
         if (CommonsBukkit.getInstance().getStaffchatPlayers().contains(event.getPlayer().getUniqueId())) {
             val packet = new StaffChatPacket()
-                .setPlayerName(player.getName())
-                .setMessage(MessageUtils.getMessageConfig(player).getChat().getStaffChatFormat()
-                    .replace("%player%", player.getName())
-                    .replace("%prefix%", prefix)
-                    .replace("%suffix%", suffix)
-                    .replace("%message%", message)
-                    .replace("&", "§"));
+                    .setPlayerName(player.getName())
+                    .setMessage(MessageUtils.getMessageConfig(player).getChat().getStaffChatFormat()
+                            .replace("%player%", player.getName())
+                            .replace("%prefix%", prefix)
+                            .replace("%suffix%", suffix)
+                            .replace("%message%", message)
+                            .replace("&", "§"));
             Redis.publish(CommonTopics.STAFFCHAT, packet);
             event.setCancelled(true);
         }
         // Server manager chat request
-        else if(ServerManagerInventory.getChatRequests().stream().anyMatch(t -> t.getLeft().equals(player))){
+        else if (ServerManagerInventory.getChatRequests().stream().anyMatch(t -> t.getLeft().equals(player))) {
             event.setCancelled(true);
 
             val triplet = ServerManagerInventory.getChatRequests().stream()
@@ -144,11 +143,11 @@ public class PlayerListener implements Listener {
         // Normal chat
         else {
             event.setFormat(MessageUtils.getMessageConfig(player).getChat().getFormat()
-                .replace("%player%", player.getName())
-                .replace("%prefix%", prefix)
-                .replace("%suffix%", suffix)
-                .replace("%message%", message)
-                .replace("&", "§"));
+                    .replace("%player%", player.getName())
+                    .replace("%prefix%", prefix)
+                    .replace("%suffix%", suffix)
+                    .replace("%message%", message)
+                    .replace("&", "§"));
         }
     }
 }

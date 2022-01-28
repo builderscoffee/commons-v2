@@ -1,7 +1,7 @@
 package eu.builderscoffee.commons.common.redisson.packets;
 
 import eu.builderscoffee.api.bukkit.utils.ItemBuilder;
-import eu.builderscoffee.api.bukkit.utils.serializations.SingleItemSerialization;
+import eu.builderscoffee.api.bukkit.utils.ItemSerialisationUtils;
 import eu.builderscoffee.api.common.redisson.packets.types.RequestPacket;
 import eu.builderscoffee.api.common.redisson.packets.types.ResponsePacket;
 import eu.builderscoffee.commons.common.utils.Quadlet;
@@ -26,7 +26,7 @@ public class ServerManagerResponse extends ResponsePacket {
     @Setter(AccessLevel.NONE)
     private Set<Action> actions = new HashSet<>();
 
-    protected ServerManagerResponse(){
+    protected ServerManagerResponse() {
         super();
     }
 
@@ -38,7 +38,7 @@ public class ServerManagerResponse extends ResponsePacket {
         super(requestPacket);
     }
 
-    public static abstract class Action{
+    public static abstract class Action {
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
@@ -52,63 +52,71 @@ public class ServerManagerResponse extends ResponsePacket {
         }
     }
 
-    public static class PageItems extends Action{
-        @Setter @Getter private String type;
-        @Setter @Getter private int maxPerPage = 27;
-        private String nextPageItem = SingleItemSerialization.serializeItemAsString(new ItemBuilder(Material.ARROW).setName("Page suivante").build());
-        private String previousPageItem = SingleItemSerialization.serializeItemAsString(new ItemBuilder(Material.ARROW).setName("Page précédente").build());
+    public static class PageItems extends Action {
+        @Setter
+        @Getter
+        private String type;
+        @Setter
+        @Getter
+        private int maxPerPage = 27;
+        private String nextPageItem = ItemSerialisationUtils.serialize(new ItemBuilder(Material.ARROW).setName("Page suivante").build());
+        private String previousPageItem = ItemSerialisationUtils.serialize(new ItemBuilder(Material.ARROW).setName("Page précédente").build());
         private List<Tuple<String, String>> items = new ArrayList<>();
 
-        public void setNextPageItem(ItemStack item){
-            nextPageItem = SingleItemSerialization.serializeItemAsString(item);
+        public ItemStack getNextPageItem() {
+            return ItemSerialisationUtils.deserialize(this.nextPageItem);
         }
 
-        public ItemStack getNextPageItem(){
-            return SingleItemSerialization.getItem(this.nextPageItem);
+        public void setNextPageItem(ItemStack item) {
+            nextPageItem = ItemSerialisationUtils.serialize(item);
         }
 
-        public void setPreviousPageItem(ItemStack item){
-            previousPageItem = SingleItemSerialization.serializeItemAsString(item);
+        public ItemStack getPreviousPageItem() {
+            return ItemSerialisationUtils.deserialize(this.previousPageItem);
         }
 
-        public ItemStack getPreviousPageItem(){
-            return SingleItemSerialization.getItem(this.previousPageItem);
+        public void setPreviousPageItem(ItemStack item) {
+            previousPageItem = ItemSerialisationUtils.serialize(item);
         }
 
-        public List<Tuple<ItemStack, String>> getItems(){
+        public List<Tuple<ItemStack, String>> getItems() {
             return items.stream()
-                    .map(tuple -> new Tuple<ItemStack, String>(SingleItemSerialization.getItem(tuple.getLeft()), tuple.getRight()))
+                    .map(tuple -> new Tuple<ItemStack, String>(ItemSerialisationUtils.deserialize(tuple.getLeft()), tuple.getRight()))
                     .collect(Collectors.toList());
         }
 
-        public void addItem(ItemStack item, String action){
-            items.add(new Tuple(SingleItemSerialization.serializeItemAsString(item), action));
+        public void addItem(ItemStack item, String action) {
+            items.add(new Tuple(ItemSerialisationUtils.serialize(item), action));
         }
     }
 
 
-    public static class Items extends Action{
-        @Setter @Getter private String type;
+    public static class Items extends Action {
+        @Setter
+        @Getter
+        private String type;
         private List<Quadlet<Integer, Integer, String, String>> items = new ArrayList<>();
 
-        public List<Quadlet<Integer, Integer, ItemStack, String>> getItems(){
+        public List<Quadlet<Integer, Integer, ItemStack, String>> getItems() {
             return items.stream()
-                    .map(quadlet -> new Quadlet<Integer, Integer, ItemStack, String>(quadlet.getFirst(), quadlet.getSecond(), SingleItemSerialization.getItem(quadlet.getThird()), quadlet.getFourth()))
+                    .map(quadlet -> new Quadlet<>(quadlet.getFirst(), quadlet.getSecond(), ItemSerialisationUtils.deserialize(quadlet.getThird()), quadlet.getFourth()))
                     .collect(Collectors.toList());
         }
 
-        public void addItem(int row, int column, ItemStack item, String action){
-            items.add(new Quadlet(row, column, SingleItemSerialization.serializeItemAsString(item), action));
+        public void addItem(int row, int column, ItemStack item, String action) {
+            items.add(new Quadlet(row, column, ItemSerialisationUtils.serialize(item), action));
         }
     }
 
-    @Getter @Setter
+    @Getter
+    @Setter
     public static class ChatRequest extends Action {
         private String type;
         private String message;
     }
 
-    @Getter @Setter
+    @Getter
+    @Setter
     public static class ChatResponse extends Action {
         private String message;
     }

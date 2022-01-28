@@ -71,8 +71,13 @@ public class LuckPermsUtils {
     public static int getWeight(UUID uuid){
         if(luckPerms == null) throw new NullPointerException("LuckPermsUtils not initialized");
 
-        final String primaryGroup = getPrimaryGroup(uuid);
-        return luckPerms.getGroupManager().getGroup(primaryGroup).getWeight().getAsInt();
+        val primaryGroup = getPrimaryGroup(uuid);
+        val weight = luckPerms.getGroupManager().getGroup(primaryGroup).getWeight();
+
+        if(!weight.isPresent())
+            return 0;
+
+        return weight.getAsInt();
     }
 
     public static boolean hasPermission(UUID uuid, String permission){

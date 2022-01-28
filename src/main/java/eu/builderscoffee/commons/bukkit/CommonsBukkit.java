@@ -73,7 +73,7 @@ public class CommonsBukkit extends JavaPlugin {
                 .setPassword(settings.getRedis().getPassword())
                 .setPort(settings.getRedis().getPort());
 
-        Redis.Initialize(Bukkit.getServer().getName(), redisCredentials, 0, 0);
+        Redis.Initialize(settings.getName(), redisCredentials, 0, 0);
 
         // Redisson Listeners
         Redis.subscribe(CommonTopics.STAFFCHAT, new StaffChatListener());

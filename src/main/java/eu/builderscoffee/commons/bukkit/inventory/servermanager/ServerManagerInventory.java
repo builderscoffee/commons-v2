@@ -6,6 +6,7 @@ import eu.builderscoffee.api.bukkit.gui.content.SlotPos;
 import eu.builderscoffee.api.bukkit.utils.ItemBuilder;
 import eu.builderscoffee.api.common.redisson.Redis;
 import eu.builderscoffee.api.common.redisson.infos.Server;
+import eu.builderscoffee.commons.bukkit.CommonsBukkit;
 import eu.builderscoffee.commons.bukkit.inventory.OptionInventory;
 import eu.builderscoffee.commons.bukkit.inventory.templates.DefaultAdminTemplateInventory;
 import eu.builderscoffee.commons.bukkit.utils.MessageUtils;
@@ -16,6 +17,7 @@ import eu.builderscoffee.commons.common.utils.Triplet;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.val;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -47,7 +49,6 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
     @Override
     public void init(Player player, InventoryContents contents) {
         super.init(player, contents);
-        System.out.println("init");
 
         val messages = MessageUtils.getMessageConfig(player).getInventory().getServerManager();
 
@@ -129,7 +130,7 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
                         player.sendMessage(chatRequestAction.getMessage());
 
                     chatRequests.add(new Triplet<>(player, this, chatRequestAction.getType()));
-                    player.closeInventory();
+                    Bukkit.getScheduler().runTask(CommonsBukkit.getInstance(), player::closeInventory);
                     return;
                 } else if (action instanceof ServerManagerResponse.ChatResponse) {
                     val chatresponseAction = (ServerManagerResponse.ChatResponse) action;
@@ -141,7 +142,7 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
 
             // If true will ignore
             if (response.isFinished()) {
-                player.closeInventory();
+                Bukkit.getScheduler().runTask(CommonsBukkit.getInstance(), player::closeInventory);
                 return;
             }
         }

@@ -4,6 +4,7 @@ description: Commons for Builders Coffe.
 author: BuildersCoffee
 main: eu.builderscoffee.commons.bukkit.CommonsBukkit
 depend: [ API, LuckPerms ]
+api-version: 1.18
 commands:
   network:
     aliases: [ net ]
