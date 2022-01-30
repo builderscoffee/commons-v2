@@ -1,8 +1,8 @@
 package eu.builderscoffee.commons.bungeecord.commands;
 
+import eu.builderscoffee.api.common.utils.TextComponentUtils;
 import eu.builderscoffee.commons.bungeecord.CommonsBungeeCord;
 import eu.builderscoffee.commons.bungeecord.utils.MessageUtils;
-import eu.builderscoffee.commons.bungeecord.utils.TextComponentUtil;
 import eu.builderscoffee.commons.common.utils.CommandUtils;
 import lombok.val;
 import net.md_5.bungee.api.CommandSender;
@@ -24,7 +24,7 @@ public class MoveCommand extends Command implements TabExecutor {
     @Override
     public void execute(CommandSender sender, String[] args) {
         if (!sender.hasPermission(CommonsBungeeCord.getInstance().getPermissions().getMovePermission())) {
-            sender.sendMessage(TextComponentUtil.decodeColor(MessageUtils.getMessageConfig(sender).getNoPermission()));
+            sender.sendMessage(TextComponentUtils.decodeColor(MessageUtils.getMessageConfig(sender).getNoPermission()));
             return;
         }
 
@@ -34,8 +34,8 @@ public class MoveCommand extends Command implements TabExecutor {
         val arg1 = CommandUtils.getArgument(args, 1);
 
         if (arg0.isEmpty()) {
-            sender.sendMessage(TextComponentUtil.decodeColor(messages.getMove().getUsage()));
-            sender.sendMessage(TextComponentUtil.decodeColor(messages.getMove().getPlayersOnline()
+            sender.sendMessage(TextComponentUtils.decodeColor(messages.getMove().getUsage()));
+            sender.sendMessage(TextComponentUtils.decodeColor(messages.getMove().getPlayersOnline()
                     .replace("%players%", String.join(", ", CommonsBungeeCord.getInstance().getProxy().getPlayers().stream()
                             .sorted(Comparator.comparing(ProxiedPlayer::getName))
                             .map(ProxiedPlayer::getName)
@@ -44,8 +44,8 @@ public class MoveCommand extends Command implements TabExecutor {
         }
 
         if (arg1.isEmpty()) {
-            sender.sendMessage(TextComponentUtil.decodeColor(messages.getMove().getUsage()));
-            sender.sendMessage(TextComponentUtil.decodeColor(messages.getMove().getServersOnline()
+            sender.sendMessage(TextComponentUtils.decodeColor(messages.getMove().getUsage()));
+            sender.sendMessage(TextComponentUtils.decodeColor(messages.getMove().getServersOnline()
                     .replace("%servers%", String.join(", ", CommonsBungeeCord.getInstance().getProxy().getServers().values().stream()
                             .sorted(Comparator.comparing(ServerInfo::getName))
                             .map(ServerInfo::getName)
@@ -60,7 +60,7 @@ public class MoveCommand extends Command implements TabExecutor {
                 .orElse(null);
 
         if (Objects.isNull(targetPlayer)) {
-            sender.sendMessage(TextComponentUtil.decodeColor(messages.getMove().getPlayerNotOnline()));
+            sender.sendMessage(TextComponentUtils.decodeColor(messages.getMove().getPlayerNotOnline()));
             return;
         }
 
@@ -71,20 +71,20 @@ public class MoveCommand extends Command implements TabExecutor {
                 .orElse(null);
 
         if (Objects.isNull(targetServer)) {
-            sender.sendMessage(TextComponentUtil.decodeColor(messages.getMove().getServerNotExist()));
+            sender.sendMessage(TextComponentUtils.decodeColor(messages.getMove().getServerNotExist()));
             return;
         }
 
         if(targetPlayer.getServer().getInfo().getName().equals(targetServer.getName())){
-            sender.sendMessage(TextComponentUtil.decodeColor(messages.getMove().getAlreadyOnThisServer()));
+            sender.sendMessage(TextComponentUtils.decodeColor(messages.getMove().getAlreadyOnThisServer()));
             return;
         }
 
 
-        sender.sendMessage(TextComponentUtil.decodeColor(MessageUtils.getMessageConfig(sender).getCommands().getMove().getMovedPlayerMessage()
+        sender.sendMessage(TextComponentUtils.decodeColor(MessageUtils.getMessageConfig(sender).getCommands().getMove().getMovedPlayerMessage()
                 .replace("%player%", targetPlayer.getName())
                 .replace("%server%", targetServer.getName())));
-        targetPlayer.sendMessage(TextComponentUtil.decodeColor(MessageUtils.getMessageConfig(targetPlayer).getCommands().getMove().getMovedByMessage()
+        targetPlayer.sendMessage(TextComponentUtils.decodeColor(MessageUtils.getMessageConfig(targetPlayer).getCommands().getMove().getMovedByMessage()
                 .replace("%player%", sender.getName())
                 .replace("%server%", targetServer.getName())));
         targetPlayer.connect(targetServer);

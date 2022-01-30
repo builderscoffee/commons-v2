@@ -1,9 +1,9 @@
 package eu.builderscoffee.commons.bungeecord.listeners.bukkit;
 
 import com.google.common.collect.Iterables;
+import eu.builderscoffee.api.common.utils.TextComponentUtils;
 import eu.builderscoffee.commons.bungeecord.CommonsBungeeCord;
 import eu.builderscoffee.commons.bungeecord.utils.MessageUtils;
-import eu.builderscoffee.commons.bungeecord.utils.TextComponentUtil;
 import eu.builderscoffee.commons.common.configuration.SettingsConfig;
 import lombok.val;
 import lombok.var;
@@ -102,7 +102,7 @@ public class PlayerListener implements Listener {
         event.setCancelled(true);
         event.setCancelServer(hubServer);
 
-        event.getPlayer().sendMessage(TextComponentUtil.decodeColor(MessageUtils.getDefaultMessageConfig().getServerRedirectionMessage().replace("%server%", hubServer.getName())));
+        event.getPlayer().sendMessage(TextComponentUtils.decodeColor(MessageUtils.getDefaultMessageConfig().getServerRedirectionMessage().replace("%server%", hubServer.getName())));
     }
 
     @EventHandler

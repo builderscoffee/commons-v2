@@ -3,10 +3,10 @@ package eu.builderscoffee.commons.bungeecord.commands;
 import eu.builderscoffee.api.common.data.DataManager;
 import eu.builderscoffee.api.common.data.tables.BanEntity;
 import eu.builderscoffee.api.common.data.tables.ProfilEntity;
+import eu.builderscoffee.api.common.utils.TextComponentUtils;
 import eu.builderscoffee.commons.bungeecord.CommonsBungeeCord;
 import eu.builderscoffee.commons.bungeecord.utils.DateUtil;
 import eu.builderscoffee.commons.bungeecord.utils.MessageUtils;
-import eu.builderscoffee.commons.bungeecord.utils.TextComponentUtil;
 import eu.builderscoffee.commons.common.utils.LuckPermsUtils;
 import lombok.val;
 import net.md_5.bungee.api.CommandSender;
@@ -27,12 +27,12 @@ public class PBanCommand extends Command {
     @Override
     public void execute(CommandSender sender, String[] args) {
         if(!sender.hasPermission(CommonsBungeeCord.getInstance().getPermissions().getPpardonPermission())){
-            sender.sendMessage(TextComponentUtil.decodeColor(MessageUtils.getMessageConfig(sender).getNoPermission()));
+            sender.sendMessage(TextComponentUtils.decodeColor(MessageUtils.getMessageConfig(sender).getNoPermission()));
             return;
         }
 
         if(args.length < 1){
-            sender.sendMessage(TextComponentUtil.decodeColor("§c/pban <player> [time] [reason]"));
+            sender.sendMessage(TextComponentUtils.decodeColor("§c/pban <player> [time] [reason]"));
             return;
         }
 
@@ -40,7 +40,7 @@ public class PBanCommand extends Command {
                 .where(ProfilEntity.NAME.lower().eq(args[0].toLowerCase()))
                 .get().firstOrNull();
         if(profil == null){
-            sender.sendMessage(TextComponentUtil.decodeColor("§cCe joueur n'existe pas"));
+            sender.sendMessage(TextComponentUtils.decodeColor("§cCe joueur n'existe pas"));
             return;
         }
 
@@ -56,7 +56,7 @@ public class PBanCommand extends Command {
                 .get().firstOrNull();
 
         if(ban != null){
-            sender.sendMessage(TextComponentUtil.decodeColor("§cCe joueur est déja banni"));
+            sender.sendMessage(TextComponentUtils.decodeColor("§cCe joueur est déja banni"));
             return;
         }
 
@@ -109,10 +109,10 @@ public class PBanCommand extends Command {
 
         ProxyServer.getInstance().getPlayers().stream()
                 .filter(player -> player.getUniqueId().toString().equals(profil.getUniqueId()))
-                .forEach(player -> player.disconnect(TextComponentUtil.decodeColor(finalMessage)));
+                .forEach(player -> player.disconnect(TextComponentUtils.decodeColor(finalMessage)));
 
         ProxyServer.getInstance().getPlayers().stream()
-                .forEach(player -> player.sendMessage(TextComponentUtil.decodeColor(MessageUtils.getMessageConfig(sender).getBanBroadcastMessage().replace("%author%", sender.getName())
+                .forEach(player -> player.sendMessage(TextComponentUtils.decodeColor(MessageUtils.getMessageConfig(sender).getBanBroadcastMessage().replace("%author%", sender.getName())
                         .replace("%player%", profil.getName())
                         .replace("%time%", DateUtil.formatDateDiff(finalBanTimestamp))
                         .replace("%reason%", finalBanReason)

@@ -1,5 +1,6 @@
 package eu.builderscoffee.commons.bukkit.listeners.bukkit;
 
+import eu.builderscoffee.api.bukkit.utils.ResourcePackUtils;
 import eu.builderscoffee.api.common.data.DataManager;
 import eu.builderscoffee.api.common.data.tables.Profil;
 import eu.builderscoffee.api.common.redisson.Redis;
@@ -33,6 +34,8 @@ public class PlayerListener implements Listener {
             player.kickPlayer("§6§lBuilders Coffee Server \n§cUne erreur est survenue lors du chargement de données.\n§cVeuillez vous reconnecter");
             return;
         }
+
+        ResourcePackUtils.sendRourcePack(player, "https://drive.google.com/uc?export=download&id=1LwkSCW4DKdiH9diheF-6tw6nIoaWfHs8", "§aHelloMyBoy", true);
 
         // Mettre à jour le pseudo si ce n'est pas correcte
         if (!player.getName().equalsIgnoreCase(profil.getName())) {

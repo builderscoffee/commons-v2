@@ -3,9 +3,9 @@ package eu.builderscoffee.commons.bungeecord.commands;
 import eu.builderscoffee.api.common.data.DataManager;
 import eu.builderscoffee.api.common.data.tables.BanEntity;
 import eu.builderscoffee.api.common.data.tables.ProfilEntity;
+import eu.builderscoffee.api.common.utils.TextComponentUtils;
 import eu.builderscoffee.commons.bungeecord.CommonsBungeeCord;
 import eu.builderscoffee.commons.bungeecord.utils.MessageUtils;
-import eu.builderscoffee.commons.bungeecord.utils.TextComponentUtil;
 import lombok.val;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
@@ -19,12 +19,12 @@ public class PPardonCommand extends Command {
     @Override
     public void execute(CommandSender sender, String[] args) {
         if(!sender.hasPermission(CommonsBungeeCord.getInstance().getPermissions().getPpardonPermission())){
-            sender.sendMessage(TextComponentUtil.decodeColor(MessageUtils.getMessageConfig(sender).getNoPermission()));
+            sender.sendMessage(TextComponentUtils.decodeColor(MessageUtils.getMessageConfig(sender).getNoPermission()));
             return;
         }
 
         if(args.length < 1){
-            sender.sendMessage(TextComponentUtil.decodeColor("§c/ppardon <player>"));
+            sender.sendMessage(TextComponentUtils.decodeColor("§c/ppardon <player>"));
             return;
         }
 
@@ -32,7 +32,7 @@ public class PPardonCommand extends Command {
                 .where(ProfilEntity.NAME.lower().eq(args[0].toLowerCase()))
                 .get().firstOrNull();
         if(profil == null){
-            sender.sendMessage(TextComponentUtil.decodeColor("§cCe joueur n'existe pas"));
+            sender.sendMessage(TextComponentUtils.decodeColor("§cCe joueur n'existe pas"));
             return;
         }
 
@@ -42,12 +42,12 @@ public class PPardonCommand extends Command {
                 .get().firstOrNull();
 
         if(ban == null){
-            sender.sendMessage(TextComponentUtil.decodeColor("§cCe joueur n'est pas banni"));
+            sender.sendMessage(TextComponentUtils.decodeColor("§cCe joueur n'est pas banni"));
             return;
         }
 
         banStore.delete(ban);
-        sender.sendMessage(TextComponentUtil.decodeColor("§aVous avez débanni " + profil.getName()));
+        sender.sendMessage(TextComponentUtils.decodeColor("§aVous avez débanni " + profil.getName()));
         CommonsBungeeCord.getInstance().getLogger().info("§7" + sender.getName() + " §8débanni §7" + profil.getName());
     }
 }
